@@ -4,7 +4,7 @@ include './Database/MySQL.php';
 
 class User
 {
-    protected $db;
+    protected \Database\MySQL $db;
 
     public function __construct()
     {
@@ -18,7 +18,7 @@ class User
         $this->db->setTable('users');
     }
 
-    public function create(array $data): bool
+    public function create(array $data): bool|string|null
     {
         return $this->db->create($data);
     }
