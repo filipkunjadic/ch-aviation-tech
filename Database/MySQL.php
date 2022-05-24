@@ -51,51 +51,72 @@ class MySQL
             $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             $this->connection->exec($sql);
             return true;
-        } catch (\Exception) {
+        } catch (\Exception $exception) {
+            error_log($exception);
             return false;
         }
     }
 
     public function create(array $params): bool|string|null
     {
-        $paramData = $this->separateParams($params);
-        $sql = 'INSERT INTO ' . $this->tableName . '  (' . implode(',', $paramData['keys']) . ') VALUES (' . implode(',', $paramData['values']) . ')';
-        $db = $this->connection->prepare($sql);
-        $result = $db->execute($paramData['setValues']);
-        return $result ? $this->connection->lastInsertId() : null;
+        try {
+            $paramData = $this->separateParams($params);
+            $sql = 'INSERT INTO ' . $this->tableName . '  (' . implode(',', $paramData['keys']) . ') VALUES (' . implode(',', $paramData['values']) . ')';
+            $db = $this->connection->prepare($sql);
+            $result = $db->execute($paramData['setValues']);
+            return $result ? $this->connection->lastInsertId() : null;
+        } catch (\Exception $exception) {
+            error_log($exception);
+            return false;
+        }
 
     }
 
     public function read(int $param): mixed
     {
-        $id = $this->formatId($param);
-        $sql = 'SELECT * FROM ' . $this->tableName . ' WHERE id = :id';
-        $db = $this->connection->prepare($sql);
-        $db->bindParam(':id', $id, \PDO::PARAM_INT);
-        $db->execute();
-        return $db->fetch(\PDO::FETCH_ASSOC);
+        try {
+            $id = $this->formatId($param);
+            $sql = 'SELECT * FROM ' . $this->tableName . ' WHERE id = :id';
+            $db = $this->connection->prepare($sql);
+            $db->bindParam(':id', $id, \PDO::PARAM_INT);
+            $db->execute();
+            return $db->fetch(\PDO::FETCH_ASSOC);
+        } catch (\Exception $exception) {
+            error_log($exception);
+            return false;
+        }
     }
 
     public function update(int $id, array $params): bool
     {
-        $id = $this->formatId($id);
-        $paramData = $this->separateParams($params);
-        $sql = 'UPDATE  ' . $this->tableName . ' SET ' . implode(', ', $paramData['fields']) . ' WHERE id=:id';
-        $db = $this->connection->prepare($sql);
-        foreach ($paramData['setValues'] as $key => &$value) {
-            $db->bindParam($key, $value);
+        try {
+            $id = $this->formatId($id);
+            $paramData = $this->separateParams($params);
+            $sql = 'UPDATE  ' . $this->tableName . ' SET ' . implode(', ', $paramData['fields']) . ' WHERE id=:id';
+            $db = $this->connection->prepare($sql);
+            foreach ($paramData['setValues'] as $key => &$value) {
+                $db->bindParam($key, $value);
+            }
+            $db->bindParam(':id', $id);
+            return $db->execute();
+        } catch (\Exception $exception) {
+            error_log($exception);
+            return false;
         }
-        $db->bindParam(':id', $id);
-        return $db->execute();
     }
 
     public function delete(int $id): ?int
     {
-        $id = $this->formatId($id);
-        $sql = 'DELETE FROM ' . $this->tableName . ' WHERE id=:id';
-        $db = $this->connection->prepare($sql);
-        $db->bindParam(':id', $id, \PDO::PARAM_INT);
-        $result = $db->execute();
-        return $result ? $db->rowCount() : null;
+        try {
+            $id = $this->formatId($id);
+            $sql = 'DELETE FROM ' . $this->tableName . ' WHERE id=:id';
+            $db = $this->connection->prepare($sql);
+            $db->bindParam(':id', $id, \PDO::PARAM_INT);
+            $result = $db->execute();
+            return $result ? $db->rowCount() : null;
+        } catch (\Exception $exception) {
+            error_log($exception);
+            return false;
+        }
     }
 }
