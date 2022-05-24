@@ -17,7 +17,7 @@ try {
     if ($uriArray[3] == 'setup') {
         if ($uriArray[4] == 'run') {
             $connection = new \Database\MySQL();
-            $sql = "CREATE TABLE users ( id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(40) NOT NULL, year_of_birth VARCHAR(40) NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP )";
+            $sql = "CREATE TABLE users ( id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(40) NOT NULL, year_of_birth VARCHAR(40) NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP )";
             $result = $connection->run($sql);
             if ($result) {
                 echo "Users table created successfully";
