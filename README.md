@@ -1,5 +1,9 @@
 # Setting up project
-
+## Requirements
+1. Nginx or apache
+2. PHP 8.1
+3. MySQL 8.*
+## Installation
 1. Clone project to desired folder
 2. Point the server to folder where you have cloned this project
 3. Turn on rewrites (if you are using nginx you can use sample config nginx/sample.conf)
